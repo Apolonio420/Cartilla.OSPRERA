@@ -1,0 +1,70 @@
+// Schema para bases de datos de consulta (solo lectura)
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/consulta-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_CONSULTA_URL")
+}
+
+// Modelo para afiliados del sistema principal
+model AfiliadoSistema {
+  id                String   @id @default(uuid())
+  dni               String   @unique @db.Char(8)
+  nombre            String
+  apellido          String
+  telefono          String?
+  email             String?
+  plan              String   @default("Básico")
+  estado_afiliacion String   @default("activo")
+  fecha_alta        DateTime?
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("afiliados_sistema")
+  @@index([dni])
+  @@index([estado_afiliacion])
+  @@index([plan])
+}
+
+// Modelo para farmacias (actualizado con tus campos)
+model Farmacia {
+  id            String   @id @default(uuid())
+  nombre        String
+  provincia     String   // Region en tu Excel
+  localidad     String   // Zona en tu Excel
+  direccion     String?  // Domicilio en tu Excel
+  codigo        String?  // Cod en tu Excel
+  latitud       Float?   // Latitud en tu Excel
+  longitud      Float?   // Longitud en tu Excel
+  telefono      String?
+  horarios      Json?
+  servicios     String[]
+  estado        String   @default("activo")
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("farmacias")
+  @@index([provincia, localidad])
+  @@index([estado])
+  @@index([nombre])
+  @@index([codigo])
+}
+
+// Modelo para especialidades (actualizado con tus campos)
+model Especialidad {
+  id            String   @id @default(uuid())
+  nombre        String   @unique  // ESPECIALIDAD en tu Excel
+  codigo_id     String?           // ID en tu Excel
+  descripcion   String?
+  estado        String   @default("activo")
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("especialidades")
+  @@index([nombre])
+  @@index([codigo_id])
+  @@index([estado])
+}
